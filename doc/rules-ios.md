@@ -6,13 +6,13 @@
 ## ios_application
 
 <pre>
-ios_application(<a href="#ios_application-name">name</a>, <a href="#ios_application-alternate_icons">alternate_icons</a>, <a href="#ios_application-app_clips">app_clips</a>, <a href="#ios_application-app_icons">app_icons</a>, <a href="#ios_application-binary_type">binary_type</a>, <a href="#ios_application-bundle_id">bundle_id</a>, <a href="#ios_application-bundle_loader">bundle_loader</a>,
-                <a href="#ios_application-bundle_name">bundle_name</a>, <a href="#ios_application-codesign_inputs">codesign_inputs</a>, <a href="#ios_application-codesignopts">codesignopts</a>, <a href="#ios_application-deps">deps</a>, <a href="#ios_application-dylibs">dylibs</a>, <a href="#ios_application-entitlements">entitlements</a>,
-                <a href="#ios_application-entitlements_validation">entitlements_validation</a>, <a href="#ios_application-executable_name">executable_name</a>, <a href="#ios_application-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_application-extensions">extensions</a>,
-                <a href="#ios_application-families">families</a>, <a href="#ios_application-frameworks">frameworks</a>, <a href="#ios_application-include_symbols_in_bundle">include_symbols_in_bundle</a>, <a href="#ios_application-infoplists">infoplists</a>, <a href="#ios_application-ipa_post_processor">ipa_post_processor</a>,
-                <a href="#ios_application-launch_images">launch_images</a>, <a href="#ios_application-launch_storyboard">launch_storyboard</a>, <a href="#ios_application-linkopts">linkopts</a>, <a href="#ios_application-minimum_os_version">minimum_os_version</a>, <a href="#ios_application-platform_type">platform_type</a>,
-                <a href="#ios_application-provisioning_profile">provisioning_profile</a>, <a href="#ios_application-resources">resources</a>, <a href="#ios_application-sdk_frameworks">sdk_frameworks</a>, <a href="#ios_application-settings_bundle">settings_bundle</a>, <a href="#ios_application-stamp">stamp</a>, <a href="#ios_application-strings">strings</a>,
-                <a href="#ios_application-version">version</a>, <a href="#ios_application-watch_application">watch_application</a>)
+ios_application(<a href="#ios_application-name">name</a>, <a href="#ios_application-additional_linker_inputs">additional_linker_inputs</a>, <a href="#ios_application-alternate_icons">alternate_icons</a>, <a href="#ios_application-app_clips">app_clips</a>, <a href="#ios_application-app_icons">app_icons</a>, <a href="#ios_application-binary_type">binary_type</a>,
+                <a href="#ios_application-bundle_id">bundle_id</a>, <a href="#ios_application-bundle_loader">bundle_loader</a>, <a href="#ios_application-bundle_name">bundle_name</a>, <a href="#ios_application-codesign_inputs">codesign_inputs</a>, <a href="#ios_application-codesignopts">codesignopts</a>, <a href="#ios_application-deps">deps</a>, <a href="#ios_application-dylibs">dylibs</a>,
+                <a href="#ios_application-entitlements">entitlements</a>, <a href="#ios_application-entitlements_validation">entitlements_validation</a>, <a href="#ios_application-executable_name">executable_name</a>, <a href="#ios_application-exported_symbols_lists">exported_symbols_lists</a>,
+                <a href="#ios_application-extensions">extensions</a>, <a href="#ios_application-families">families</a>, <a href="#ios_application-frameworks">frameworks</a>, <a href="#ios_application-include_symbols_in_bundle">include_symbols_in_bundle</a>, <a href="#ios_application-infoplists">infoplists</a>,
+                <a href="#ios_application-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_application-launch_images">launch_images</a>, <a href="#ios_application-launch_storyboard">launch_storyboard</a>, <a href="#ios_application-linkopts">linkopts</a>, <a href="#ios_application-minimum_os_version">minimum_os_version</a>,
+                <a href="#ios_application-platform_type">platform_type</a>, <a href="#ios_application-provisioning_profile">provisioning_profile</a>, <a href="#ios_application-resources">resources</a>, <a href="#ios_application-sdk_frameworks">sdk_frameworks</a>, <a href="#ios_application-settings_bundle">settings_bundle</a>,
+                <a href="#ios_application-stamp">stamp</a>, <a href="#ios_application-strings">strings</a>, <a href="#ios_application-version">version</a>, <a href="#ios_application-watch_application">watch_application</a>)
 </pre>
 
 Builds and bundles an iOS Application.
@@ -23,6 +23,7 @@ Builds and bundles an iOS Application.
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="ios_application-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/docs/build-ref.html#name">Name</a> | required |  |
+| <a id="ios_application-additional_linker_inputs"></a>additional_linker_inputs |  A list of input files to be passed to the linker.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_application-alternate_icons"></a>alternate_icons |  Files that comprise the alternate app icons for the application. Each file must have a containing directory named after the alternate icon identifier.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_application-app_clips"></a>app_clips |  A list of iOS app clips to include in the final application bundle.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_application-app_icons"></a>app_icons |  Files that comprise the app icons for the application. Each file must have a containing directory named <code>*..xcassets/*..appiconset</code> and there may be only one such <code>..appiconset</code> directory in the list.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
@@ -99,11 +100,11 @@ ios_build_test(
 ## ios_extension
 
 <pre>
-ios_extension(<a href="#ios_extension-name">name</a>, <a href="#ios_extension-app_icons">app_icons</a>, <a href="#ios_extension-binary_type">binary_type</a>, <a href="#ios_extension-bundle_id">bundle_id</a>, <a href="#ios_extension-bundle_loader">bundle_loader</a>, <a href="#ios_extension-bundle_name">bundle_name</a>, <a href="#ios_extension-codesign_inputs">codesign_inputs</a>,
-              <a href="#ios_extension-codesignopts">codesignopts</a>, <a href="#ios_extension-deps">deps</a>, <a href="#ios_extension-dylibs">dylibs</a>, <a href="#ios_extension-entitlements">entitlements</a>, <a href="#ios_extension-entitlements_validation">entitlements_validation</a>, <a href="#ios_extension-executable_name">executable_name</a>,
-              <a href="#ios_extension-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_extension-families">families</a>, <a href="#ios_extension-frameworks">frameworks</a>, <a href="#ios_extension-infoplists">infoplists</a>, <a href="#ios_extension-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_extension-linkopts">linkopts</a>,
-              <a href="#ios_extension-minimum_os_version">minimum_os_version</a>, <a href="#ios_extension-platform_type">platform_type</a>, <a href="#ios_extension-provisioning_profile">provisioning_profile</a>, <a href="#ios_extension-resources">resources</a>, <a href="#ios_extension-sdk_frameworks">sdk_frameworks</a>,
-              <a href="#ios_extension-stamp">stamp</a>, <a href="#ios_extension-strings">strings</a>, <a href="#ios_extension-version">version</a>)
+ios_extension(<a href="#ios_extension-name">name</a>, <a href="#ios_extension-additional_linker_inputs">additional_linker_inputs</a>, <a href="#ios_extension-app_icons">app_icons</a>, <a href="#ios_extension-binary_type">binary_type</a>, <a href="#ios_extension-bundle_id">bundle_id</a>, <a href="#ios_extension-bundle_loader">bundle_loader</a>,
+              <a href="#ios_extension-bundle_name">bundle_name</a>, <a href="#ios_extension-codesign_inputs">codesign_inputs</a>, <a href="#ios_extension-codesignopts">codesignopts</a>, <a href="#ios_extension-deps">deps</a>, <a href="#ios_extension-dylibs">dylibs</a>, <a href="#ios_extension-entitlements">entitlements</a>,
+              <a href="#ios_extension-entitlements_validation">entitlements_validation</a>, <a href="#ios_extension-executable_name">executable_name</a>, <a href="#ios_extension-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_extension-families">families</a>, <a href="#ios_extension-frameworks">frameworks</a>,
+              <a href="#ios_extension-infoplists">infoplists</a>, <a href="#ios_extension-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_extension-linkopts">linkopts</a>, <a href="#ios_extension-minimum_os_version">minimum_os_version</a>, <a href="#ios_extension-platform_type">platform_type</a>,
+              <a href="#ios_extension-provisioning_profile">provisioning_profile</a>, <a href="#ios_extension-resources">resources</a>, <a href="#ios_extension-sdk_frameworks">sdk_frameworks</a>, <a href="#ios_extension-stamp">stamp</a>, <a href="#ios_extension-strings">strings</a>, <a href="#ios_extension-version">version</a>)
 </pre>
 
 Builds and bundles an iOS Application Extension.
@@ -122,6 +123,7 @@ the system framework's entry point instead.
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="ios_extension-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/docs/build-ref.html#name">Name</a> | required |  |
+| <a id="ios_extension-additional_linker_inputs"></a>additional_linker_inputs |  A list of input files to be passed to the linker.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_extension-app_icons"></a>app_icons |  Files that comprise the app icons for the application. Each file must have a containing directory named <code>*..xcassets/*..appiconset</code> and there may be only one such <code>..appiconset</code> directory in the list.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_extension-binary_type"></a>binary_type |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | String | optional | "executable" |
 | <a id="ios_extension-bundle_id"></a>bundle_id |  The bundle ID (reverse-DNS path followed by app name) for this target.   | String | required |  |
@@ -155,11 +157,11 @@ the system framework's entry point instead.
 ## ios_framework
 
 <pre>
-ios_framework(<a href="#ios_framework-name">name</a>, <a href="#ios_framework-binary_type">binary_type</a>, <a href="#ios_framework-bundle_id">bundle_id</a>, <a href="#ios_framework-bundle_loader">bundle_loader</a>, <a href="#ios_framework-bundle_name">bundle_name</a>, <a href="#ios_framework-bundle_only">bundle_only</a>,
-              <a href="#ios_framework-codesign_inputs">codesign_inputs</a>, <a href="#ios_framework-codesignopts">codesignopts</a>, <a href="#ios_framework-deps">deps</a>, <a href="#ios_framework-dylibs">dylibs</a>, <a href="#ios_framework-executable_name">executable_name</a>, <a href="#ios_framework-exported_symbols_lists">exported_symbols_lists</a>,
-              <a href="#ios_framework-extension_safe">extension_safe</a>, <a href="#ios_framework-families">families</a>, <a href="#ios_framework-frameworks">frameworks</a>, <a href="#ios_framework-hdrs">hdrs</a>, <a href="#ios_framework-infoplists">infoplists</a>, <a href="#ios_framework-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_framework-linkopts">linkopts</a>,
-              <a href="#ios_framework-minimum_os_version">minimum_os_version</a>, <a href="#ios_framework-platform_type">platform_type</a>, <a href="#ios_framework-provisioning_profile">provisioning_profile</a>, <a href="#ios_framework-resources">resources</a>, <a href="#ios_framework-stamp">stamp</a>, <a href="#ios_framework-strings">strings</a>,
-              <a href="#ios_framework-version">version</a>)
+ios_framework(<a href="#ios_framework-name">name</a>, <a href="#ios_framework-additional_linker_inputs">additional_linker_inputs</a>, <a href="#ios_framework-binary_type">binary_type</a>, <a href="#ios_framework-bundle_id">bundle_id</a>, <a href="#ios_framework-bundle_loader">bundle_loader</a>, <a href="#ios_framework-bundle_name">bundle_name</a>,
+              <a href="#ios_framework-bundle_only">bundle_only</a>, <a href="#ios_framework-codesign_inputs">codesign_inputs</a>, <a href="#ios_framework-codesignopts">codesignopts</a>, <a href="#ios_framework-deps">deps</a>, <a href="#ios_framework-dylibs">dylibs</a>, <a href="#ios_framework-executable_name">executable_name</a>,
+              <a href="#ios_framework-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_framework-extension_safe">extension_safe</a>, <a href="#ios_framework-families">families</a>, <a href="#ios_framework-frameworks">frameworks</a>, <a href="#ios_framework-hdrs">hdrs</a>, <a href="#ios_framework-infoplists">infoplists</a>,
+              <a href="#ios_framework-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_framework-linkopts">linkopts</a>, <a href="#ios_framework-minimum_os_version">minimum_os_version</a>, <a href="#ios_framework-platform_type">platform_type</a>, <a href="#ios_framework-provisioning_profile">provisioning_profile</a>,
+              <a href="#ios_framework-resources">resources</a>, <a href="#ios_framework-stamp">stamp</a>, <a href="#ios_framework-strings">strings</a>, <a href="#ios_framework-version">version</a>)
 </pre>
 
 Builds and bundles an iOS Dynamic Framework.
@@ -173,6 +175,7 @@ of those `ios_application` and/or `ios_extension` rules.
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="ios_framework-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/docs/build-ref.html#name">Name</a> | required |  |
+| <a id="ios_framework-additional_linker_inputs"></a>additional_linker_inputs |  A list of input files to be passed to the linker.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_framework-binary_type"></a>binary_type |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | String | optional | "dylib" |
 | <a id="ios_framework-bundle_id"></a>bundle_id |  The bundle ID (reverse-DNS path followed by app name) for this target.   | String | required |  |
 | <a id="ios_framework-bundle_loader"></a>bundle_loader |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | <a href="https://bazel.build/docs/build-ref.html#labels">Label</a> | optional | None |
@@ -245,11 +248,12 @@ for either an iOS iMessage extension or a Sticker Pack extension.
 ## ios_imessage_extension
 
 <pre>
-ios_imessage_extension(<a href="#ios_imessage_extension-name">name</a>, <a href="#ios_imessage_extension-app_icons">app_icons</a>, <a href="#ios_imessage_extension-binary_type">binary_type</a>, <a href="#ios_imessage_extension-bundle_id">bundle_id</a>, <a href="#ios_imessage_extension-bundle_loader">bundle_loader</a>, <a href="#ios_imessage_extension-bundle_name">bundle_name</a>,
-                       <a href="#ios_imessage_extension-codesign_inputs">codesign_inputs</a>, <a href="#ios_imessage_extension-codesignopts">codesignopts</a>, <a href="#ios_imessage_extension-deps">deps</a>, <a href="#ios_imessage_extension-dylibs">dylibs</a>, <a href="#ios_imessage_extension-entitlements">entitlements</a>,
-                       <a href="#ios_imessage_extension-entitlements_validation">entitlements_validation</a>, <a href="#ios_imessage_extension-executable_name">executable_name</a>, <a href="#ios_imessage_extension-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_imessage_extension-families">families</a>,
-                       <a href="#ios_imessage_extension-frameworks">frameworks</a>, <a href="#ios_imessage_extension-infoplists">infoplists</a>, <a href="#ios_imessage_extension-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_imessage_extension-linkopts">linkopts</a>, <a href="#ios_imessage_extension-minimum_os_version">minimum_os_version</a>,
-                       <a href="#ios_imessage_extension-platform_type">platform_type</a>, <a href="#ios_imessage_extension-provisioning_profile">provisioning_profile</a>, <a href="#ios_imessage_extension-resources">resources</a>, <a href="#ios_imessage_extension-stamp">stamp</a>, <a href="#ios_imessage_extension-strings">strings</a>, <a href="#ios_imessage_extension-version">version</a>)
+ios_imessage_extension(<a href="#ios_imessage_extension-name">name</a>, <a href="#ios_imessage_extension-additional_linker_inputs">additional_linker_inputs</a>, <a href="#ios_imessage_extension-app_icons">app_icons</a>, <a href="#ios_imessage_extension-binary_type">binary_type</a>, <a href="#ios_imessage_extension-bundle_id">bundle_id</a>,
+                       <a href="#ios_imessage_extension-bundle_loader">bundle_loader</a>, <a href="#ios_imessage_extension-bundle_name">bundle_name</a>, <a href="#ios_imessage_extension-codesign_inputs">codesign_inputs</a>, <a href="#ios_imessage_extension-codesignopts">codesignopts</a>, <a href="#ios_imessage_extension-deps">deps</a>, <a href="#ios_imessage_extension-dylibs">dylibs</a>,
+                       <a href="#ios_imessage_extension-entitlements">entitlements</a>, <a href="#ios_imessage_extension-entitlements_validation">entitlements_validation</a>, <a href="#ios_imessage_extension-executable_name">executable_name</a>, <a href="#ios_imessage_extension-exported_symbols_lists">exported_symbols_lists</a>,
+                       <a href="#ios_imessage_extension-families">families</a>, <a href="#ios_imessage_extension-frameworks">frameworks</a>, <a href="#ios_imessage_extension-infoplists">infoplists</a>, <a href="#ios_imessage_extension-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_imessage_extension-linkopts">linkopts</a>,
+                       <a href="#ios_imessage_extension-minimum_os_version">minimum_os_version</a>, <a href="#ios_imessage_extension-platform_type">platform_type</a>, <a href="#ios_imessage_extension-provisioning_profile">provisioning_profile</a>, <a href="#ios_imessage_extension-resources">resources</a>, <a href="#ios_imessage_extension-stamp">stamp</a>,
+                       <a href="#ios_imessage_extension-strings">strings</a>, <a href="#ios_imessage_extension-version">version</a>)
 </pre>
 
 Builds and bundles an iOS iMessage Extension.
@@ -260,6 +264,7 @@ Builds and bundles an iOS iMessage Extension.
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="ios_imessage_extension-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/docs/build-ref.html#name">Name</a> | required |  |
+| <a id="ios_imessage_extension-additional_linker_inputs"></a>additional_linker_inputs |  A list of input files to be passed to the linker.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_imessage_extension-app_icons"></a>app_icons |  Files that comprise the app icons for the application. Each file must have a containing directory named <code>*..xcassets/*..stickersiconset</code> and there may be only one such <code>..stickersiconset</code> directory in the list.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_imessage_extension-binary_type"></a>binary_type |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | String | optional | "executable" |
 | <a id="ios_imessage_extension-bundle_id"></a>bundle_id |  The bundle ID (reverse-DNS path followed by app name) for this target.   | String | required |  |
@@ -292,11 +297,11 @@ Builds and bundles an iOS iMessage Extension.
 ## ios_static_framework
 
 <pre>
-ios_static_framework(<a href="#ios_static_framework-name">name</a>, <a href="#ios_static_framework-avoid_deps">avoid_deps</a>, <a href="#ios_static_framework-binary_type">binary_type</a>, <a href="#ios_static_framework-bundle_loader">bundle_loader</a>, <a href="#ios_static_framework-bundle_name">bundle_name</a>, <a href="#ios_static_framework-codesign_inputs">codesign_inputs</a>,
-                     <a href="#ios_static_framework-codesignopts">codesignopts</a>, <a href="#ios_static_framework-deps">deps</a>, <a href="#ios_static_framework-dylibs">dylibs</a>, <a href="#ios_static_framework-exclude_resources">exclude_resources</a>, <a href="#ios_static_framework-executable_name">executable_name</a>,
-                     <a href="#ios_static_framework-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_static_framework-families">families</a>, <a href="#ios_static_framework-frameworks">frameworks</a>, <a href="#ios_static_framework-hdrs">hdrs</a>, <a href="#ios_static_framework-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_static_framework-linkopts">linkopts</a>,
-                     <a href="#ios_static_framework-minimum_os_version">minimum_os_version</a>, <a href="#ios_static_framework-platform_type">platform_type</a>, <a href="#ios_static_framework-resources">resources</a>, <a href="#ios_static_framework-stamp">stamp</a>, <a href="#ios_static_framework-strings">strings</a>, <a href="#ios_static_framework-umbrella_header">umbrella_header</a>,
-                     <a href="#ios_static_framework-version">version</a>)
+ios_static_framework(<a href="#ios_static_framework-name">name</a>, <a href="#ios_static_framework-additional_linker_inputs">additional_linker_inputs</a>, <a href="#ios_static_framework-avoid_deps">avoid_deps</a>, <a href="#ios_static_framework-binary_type">binary_type</a>, <a href="#ios_static_framework-bundle_loader">bundle_loader</a>,
+                     <a href="#ios_static_framework-bundle_name">bundle_name</a>, <a href="#ios_static_framework-codesign_inputs">codesign_inputs</a>, <a href="#ios_static_framework-codesignopts">codesignopts</a>, <a href="#ios_static_framework-deps">deps</a>, <a href="#ios_static_framework-dylibs">dylibs</a>, <a href="#ios_static_framework-exclude_resources">exclude_resources</a>,
+                     <a href="#ios_static_framework-executable_name">executable_name</a>, <a href="#ios_static_framework-exported_symbols_lists">exported_symbols_lists</a>, <a href="#ios_static_framework-families">families</a>, <a href="#ios_static_framework-frameworks">frameworks</a>, <a href="#ios_static_framework-hdrs">hdrs</a>,
+                     <a href="#ios_static_framework-ipa_post_processor">ipa_post_processor</a>, <a href="#ios_static_framework-linkopts">linkopts</a>, <a href="#ios_static_framework-minimum_os_version">minimum_os_version</a>, <a href="#ios_static_framework-platform_type">platform_type</a>, <a href="#ios_static_framework-resources">resources</a>,
+                     <a href="#ios_static_framework-stamp">stamp</a>, <a href="#ios_static_framework-strings">strings</a>, <a href="#ios_static_framework-umbrella_header">umbrella_header</a>, <a href="#ios_static_framework-version">version</a>)
 </pre>
 
 Builds and bundles an iOS static framework for third-party distribution.
@@ -343,6 +348,7 @@ i.e. `--features=-swift.no_generated_header`).
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
 | <a id="ios_static_framework-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/docs/build-ref.html#name">Name</a> | required |  |
+| <a id="ios_static_framework-additional_linker_inputs"></a>additional_linker_inputs |  A list of input files to be passed to the linker.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_static_framework-avoid_deps"></a>avoid_deps |  A list of library targets on which this framework depends in order to compile, but the transitive closure of which will not be linked into the framework's binary.   | <a href="https://bazel.build/docs/build-ref.html#labels">List of labels</a> | optional | [] |
 | <a id="ios_static_framework-binary_type"></a>binary_type |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | String | optional | "executable" |
 | <a id="ios_static_framework-bundle_loader"></a>bundle_loader |  This attribute is public as an implementation detail while we migrate the architecture of the rules. Do not change its value.   | <a href="https://bazel.build/docs/build-ref.html#labels">Label</a> | optional | None |
