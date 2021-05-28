@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Defines providers and related types used throughout the bundling rules.
+"""# Providers
+
+Defines providers and related types used throughout the rules in this repository.
+
+Most users will not need to use these providers to simply create and build Apple
+targets, but if you want to write your own custom rules that interact with these
+rules, then you will use these providers to communicate between them.
 
 These providers are part of the public API of the bundling rules. Other rules
 that want to propagate information to the bundling rules or that want to
@@ -26,6 +32,7 @@ Provides information about an Apple bundle target.
 
 This provider propagates general information about an Apple bundle that is not
 specific to any particular bundle type.
+It is propagated by most bundling rules—applications, extensions, frameworks, test bundles, and so forth.
 """,
     fields = {
         "archive": "`File`. The archive that contains the built application.",
@@ -151,6 +158,10 @@ build with --define=apple.package_symbols=(yes|true|1).
         "build_archs": """
 Depset of strings that represent binary architectures reported from the current build.
 """,
+        "debug_info_binaries": """
+Depset of Files that represent framework binaries and dSYM binaries that
+provide debug info.
+""",
     },
 )
 
@@ -249,9 +260,6 @@ for the target to run.
 """,
         "resolved_xctoolrunner": """\
 A `struct` from `ctx.resolve_tools` referencing a tool that acts as a wrapper for xcrun actions.
-""",
-        "std_redirect_dylib": """\
-A `File` referencing a dynamic library used to redirect stdout and stderr when necessary.
 """,
     },
 )

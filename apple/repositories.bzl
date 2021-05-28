@@ -100,9 +100,9 @@ def apple_rules_dependencies(ignore_version_differences = False):
         http_archive,
         name = "bazel_skylib",
         urls = [
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.2/bazel-skylib-1.0.2.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.0.3/bazel-skylib-1.0.3.tar.gz",
         ],
-        sha256 = "97e70364e9249702246c0e9444bccdc4b847bed1eb03c5a3ece4f83dfe6abc44",
+        sha256 = "1c531376ac7e5a180e0237938a2536de0c54d93f5c278634818e0efc952dd56c",
         ignore_version_differences = ignore_version_differences,
     )
 
@@ -120,9 +120,9 @@ def apple_rules_dependencies(ignore_version_differences = False):
         http_archive,
         name = "build_bazel_rules_swift",
         urls = [
-            "https://github.com/bazelbuild/rules_swift/releases/download/0.21.0/rules_swift.0.21.0.tar.gz",
+            "https://github.com/bazelbuild/rules_swift/releases/download/0.22.0/rules_swift.0.22.0.tar.gz",
         ],
-        sha256 = "8407fa0fd04a7ce1d6bb95e90b216404466f809eda459c23cb57b5fa1ef9d639",
+        sha256 = "653e8756001616500b110fd156694de7899278bb7480aba22b2f156438a1d810",
         ignore_version_differences = ignore_version_differences,
     )
 
@@ -141,9 +141,9 @@ def apple_rules_dependencies(ignore_version_differences = False):
         http_archive,
         name = "xctestrunner",
         urls = [
-            "https://github.com/google/xctestrunner/archive/64a9be0b6fa833b4b2371729c5c8cdd2c6f7775b.tar.gz",
+            "https://github.com/google/xctestrunner/archive/5a1b0c158f2debace60722ddbcb5035e3387810e.tar.gz",
         ],
-        strip_prefix = "xctestrunner-64a9be0b6fa833b4b2371729c5c8cdd2c6f7775b",
-        sha256 = "c03e91efc01a1fa2f6c7764b93f5312e20c9c4fae124de2fc398871e46d4244d",
+        strip_prefix = "xctestrunner-5a1b0c158f2debace60722ddbcb5035e3387810e",
+        sha256 = "cae8b4dc21f793161b45d48f00db56d04174de7dfcfb990da64a69c2d06a6450",
         ignore_version_differences = ignore_version_differences,
     )

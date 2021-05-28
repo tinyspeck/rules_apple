@@ -24,7 +24,6 @@ apple_support_toolchain(
     imported_dynamic_framework_processor = "//tools/imported_dynamic_framework_processor",
     plisttool = "//tools/plisttool",
     process_and_sign_template = "//tools/bundletool:process_and_sign_template",
-    std_redirect_dylib = "@bazel_tools//tools/objc:StdRedirect.dylib",
     swift_stdlib_tool = "//tools/swift_stdlib_tool",
     # Used by the rule implementations, so it needs to be public; but
     # should be considered an implementation detail of the rules and
@@ -80,7 +79,6 @@ bzl_library(
     ],
     deps = [
         ":entitlement_rules",
-        ":exported_symbols_lists_rules",
         ":platform_support",
         ":swift_support",
     ],
@@ -173,17 +171,6 @@ bzl_library(
     ],
     deps = [
         "//apple/internal/utils:defines",
-    ],
-)
-
-bzl_library(
-    name = "exported_symbols_lists_rules",
-    srcs = ["exported_symbols_lists_rules.bzl"],
-    visibility = [
-        "//apple:__subpackages__",
-    ],
-    deps = [
-        ":linking_support",
     ],
 )
 
@@ -314,9 +301,11 @@ bzl_library(
     deps = [
         "//apple/internal/partials:app_assets_validation",
         "//apple/internal/partials:apple_bundle_info",
+        "//apple/internal/partials:apple_symbols_file",
         "//apple/internal/partials:binary",
         "//apple/internal/partials:bitcode_symbols",
         "//apple/internal/partials:clang_rt_dylibs",
+        "//apple/internal/partials:codesigning_dossier",
         "//apple/internal/partials:debug_symbols",
         "//apple/internal/partials:embedded_bundles",
         "//apple/internal/partials:extension_safe_validation",

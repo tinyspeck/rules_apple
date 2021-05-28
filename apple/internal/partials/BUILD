@@ -35,6 +35,20 @@ bzl_library(
 )
 
 bzl_library(
+    name = "apple_symbols_file",
+    srcs = ["apple_symbols_file.bzl"],
+    visibility = [
+        "//apple/internal:__pkg__",
+    ],
+    deps = [
+        "//apple/internal:intermediates",
+        "//apple/internal:processor",
+        "@bazel_skylib//lib:partial",
+        "@build_bazel_apple_support//lib:apple_support",
+    ],
+)
+
+bzl_library(
     name = "binary",
     srcs = ["binary.bzl"],
     visibility = [
@@ -72,6 +86,21 @@ bzl_library(
         "//apple/internal:processor",
         "@bazel_skylib//lib:partial",
         "@build_bazel_apple_support//lib:apple_support",
+    ],
+)
+
+bzl_library(
+    name = "codesigning_dossier",
+    srcs = ["codesigning_dossier.bzl"],
+    visibility = [
+        "//apple/internal:__pkg__",
+    ],
+    deps = [
+        "//apple/internal:codesigning_support",
+        "//apple/internal:processor",
+        "@bazel_skylib//lib:partial",
+        "@bazel_skylib//lib:paths",
+        "@bazel_skylib//lib:sets",
     ],
 )
 

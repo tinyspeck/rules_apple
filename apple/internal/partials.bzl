@@ -23,6 +23,10 @@ load(
     _apple_bundle_info_partial = "apple_bundle_info_partial",
 )
 load(
+    "@build_bazel_rules_apple//apple/internal/partials:apple_symbols_file.bzl",
+    _apple_symbols_file_partial = "apple_symbols_file_partial",
+)
+load(
     "@build_bazel_rules_apple//apple/internal/partials:binary.bzl",
     _binary_partial = "binary_partial",
 )
@@ -33,6 +37,10 @@ load(
 load(
     "@build_bazel_rules_apple//apple/internal/partials:clang_rt_dylibs.bzl",
     _clang_rt_dylibs_partial = "clang_rt_dylibs_partial",
+)
+load(
+    "@build_bazel_rules_apple//apple/internal/partials:codesigning_dossier.bzl",
+    _codesigning_dossier_partial = "codesigning_dossier_partial",
 )
 load(
     "@build_bazel_rules_apple//apple/internal/partials:debug_symbols.bzl",
@@ -105,6 +113,7 @@ partials = struct(
     binary_partial = _binary_partial,
     bitcode_symbols_partial = _bitcode_symbols_partial,
     clang_rt_dylibs_partial = _clang_rt_dylibs_partial,
+    codesigning_dossier_partial = _codesigning_dossier_partial,
     debug_symbols_partial = _debug_symbols_partial,
     embedded_bundles_partial = _embedded_bundles_partial,
     extension_safe_validation_partial = _extension_safe_validation_partial,
@@ -120,5 +129,6 @@ partials = struct(
     swift_dylibs_partial = _swift_dylibs_partial,
     swift_dynamic_framework_partial = _swift_dynamic_framework_partial,
     swift_static_framework_partial = _swift_static_framework_partial,
+    apple_symbols_file_partial = _apple_symbols_file_partial,
     watchos_stub_partial = _watchos_stub_partial,
 )

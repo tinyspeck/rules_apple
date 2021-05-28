@@ -186,6 +186,18 @@ def _ios_application_impl(ctx):
             package_bitcode = True,
             platform_prerequisites = platform_prerequisites,
         ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_name = bundle_name,
+            embedded_targets = embeddable_targets,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
+        ),
         partials.clang_rt_dylibs_partial(
             actions = actions,
             apple_toolchain_info = apple_toolchain_info,
@@ -203,7 +215,6 @@ def _ios_application_impl(ctx):
             debug_outputs_provider = debug_outputs_provider,
             dsym_info_plist_template = apple_toolchain_info.dsym_info_plist_template,
             executable_name = executable_name,
-            package_symbols = True,
             platform_prerequisites = platform_prerequisites,
             rule_label = label,
         ),
@@ -216,7 +227,6 @@ def _ios_application_impl(ctx):
             actions = actions,
             apple_toolchain_info = apple_toolchain_info,
             label_name = label.name,
-            package_symbols = True,
             platform_prerequisites = platform_prerequisites,
             provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
             rule_descriptor = rule_descriptor,
@@ -254,6 +264,15 @@ def _ios_application_impl(ctx):
             dependency_targets = embeddable_targets,
             label_name = label.name,
             package_swift_support_if_needed = True,
+            platform_prerequisites = platform_prerequisites,
+        ),
+        partials.apple_symbols_file_partial(
+            actions = actions,
+            binary_artifact = binary_artifact,
+            debug_outputs_provider = debug_outputs_provider,
+            dependency_targets = embeddable_targets + ctx.attr.deps,
+            label_name = label.name,
+            include_symbols_in_bundle = ctx.attr.include_symbols_in_bundle,
             platform_prerequisites = platform_prerequisites,
         ),
     ]
@@ -336,7 +355,7 @@ def _ios_application_impl(ctx):
             executable = executable,
             files = processor_result.output_files,
             runfiles = ctx.runfiles(
-                files = [archive, apple_toolchain_info.std_redirect_dylib],
+                files = [archive],
             ),
         ),
         IosApplicationBundleInfo(),
@@ -430,6 +449,19 @@ def _ios_app_clip_impl(ctx):
             label_name = label.name,
             package_bitcode = True,
             platform_prerequisites = platform_prerequisites,
+        ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_location = processor.location.app_clip,
+            bundle_name = bundle_name,
+            embedded_targets = embeddable_targets,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
         ),
         partials.clang_rt_dylibs_partial(
             actions = actions,
@@ -553,7 +585,7 @@ def _ios_app_clip_impl(ctx):
             executable = executable,
             files = processor_result.output_files,
             runfiles = ctx.runfiles(
-                files = [archive, apple_toolchain_info.std_redirect_dylib],
+                files = [archive],
             ),
         ),
         IosAppClipBundleInfo(),
@@ -647,6 +679,20 @@ def _ios_framework_impl(ctx):
             label_name = label.name,
             platform_prerequisites = platform_prerequisites,
         ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_location = processor.location.framework,
+            bundle_name = bundle_name,
+            embed_target_dossiers = False,
+            embedded_targets = ctx.attr.frameworks,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
+        ),
         # TODO(kaipi): Check if clang_rt dylibs are needed in Frameworks, or if
         # the can be skipped.
         partials.clang_rt_dylibs_partial(
@@ -713,6 +759,15 @@ def _ios_framework_impl(ctx):
             binary_artifact = binary_artifact,
             dependency_targets = ctx.attr.frameworks,
             label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+        ),
+        partials.apple_symbols_file_partial(
+            actions = actions,
+            binary_artifact = binary_artifact,
+            debug_outputs_provider = debug_outputs_provider,
+            dependency_targets = ctx.attr.frameworks,
+            label_name = label.name,
+            include_symbols_in_bundle = False,
             platform_prerequisites = platform_prerequisites,
         ),
     ]
@@ -831,6 +886,20 @@ def _ios_extension_impl(ctx):
             label_name = label.name,
             platform_prerequisites = platform_prerequisites,
         ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_location = processor.location.plugin,
+            bundle_name = bundle_name,
+            embed_target_dossiers = False,
+            embedded_targets = ctx.attr.frameworks,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
+        ),
         partials.clang_rt_dylibs_partial(
             actions = actions,
             apple_toolchain_info = apple_toolchain_info,
@@ -884,6 +953,15 @@ def _ios_extension_impl(ctx):
             binary_artifact = binary_artifact,
             dependency_targets = ctx.attr.frameworks,
             label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+        ),
+        partials.apple_symbols_file_partial(
+            actions = actions,
+            binary_artifact = binary_artifact,
+            debug_outputs_provider = debug_outputs_provider,
+            dependency_targets = ctx.attr.frameworks,
+            label_name = label.name,
+            include_symbols_in_bundle = False,
             platform_prerequisites = platform_prerequisites,
         ),
     ]
@@ -1294,6 +1372,17 @@ def _ios_imessage_application_impl(ctx):
             executable_name = executable_name,
             label_name = label.name,
         ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_name = bundle_name,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
+        ),
         partials.embedded_bundles_partial(
             bundle_embedded_bundles = True,
             embeddable_targets = embeddable_targets,
@@ -1456,6 +1545,20 @@ def _ios_imessage_extension_impl(ctx):
             dependency_targets = ctx.attr.frameworks,
             label_name = label.name,
             platform_prerequisites = platform_prerequisites,
+        ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_location = processor.location.plugin,
+            bundle_name = bundle_name,
+            embed_target_dossiers = False,
+            embedded_targets = ctx.attr.frameworks,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
         ),
         partials.clang_rt_dylibs_partial(
             actions = actions,
@@ -1622,6 +1725,18 @@ def _ios_sticker_pack_extension_impl(ctx):
             executable_name = executable_name,
             label_name = label.name,
         ),
+        partials.codesigning_dossier_partial(
+            actions = actions,
+            apple_toolchain_info = apple_toolchain_info,
+            bundle_extension = bundle_extension,
+            bundle_location = processor.location.plugin,
+            bundle_name = bundle_name,
+            entitlements = entitlements,
+            label_name = label.name,
+            platform_prerequisites = platform_prerequisites,
+            provisioning_profile = getattr(ctx.file, "provisioning_profile", None),
+            rule_descriptor = rule_descriptor,
+        ),
         partials.embedded_bundles_partial(
             platform_prerequisites = platform_prerequisites,
             plugins = [archive_for_embedding],
@@ -1706,14 +1821,25 @@ ios_extension = rule_factory.create_apple_bundling_rule(
     implementation = _ios_extension_impl,
     platform_type = "ios",
     product_type = apple_product_type.app_extension,
-    doc = "Builds and bundles an iOS Application Extension.",
+    doc = """Builds and bundles an iOS Application Extension.
+
+Most iOS app extensions use a plug-in-based architecture where the executable's entry point
+is provided by a system framework.
+However, iOS 14 introduced Widget Extensions that use a traditional `main` entry point
+(typically expressed through Swift's `@main` attribute).
+If you are building a Widget Extension, you must set `provides_main = True` to indicate
+that your code provides the entry point so that Bazel doesn't direct the linker to use
+the system framework's entry point instead.""",
 )
 
 ios_framework = rule_factory.create_apple_bundling_rule(
     implementation = _ios_framework_impl,
     platform_type = "ios",
     product_type = apple_product_type.framework,
-    doc = "Builds and bundles an iOS Dynamic Framework.",
+    doc = """Builds and bundles an iOS Dynamic Framework.
+
+To use this framework for your app and extensions, list it in the `frameworks` attributes
+of those `ios_application` and/or `ios_extension` rules.""",
 )
 
 ios_dynamic_framework = rule_factory.create_apple_bundling_rule(
@@ -1727,14 +1853,53 @@ ios_static_framework = rule_factory.create_apple_bundling_rule(
     implementation = _ios_static_framework_impl,
     platform_type = "ios",
     product_type = apple_product_type.static_framework,
-    doc = "Builds and bundles an iOS Static Framework.",
+    doc = """Builds and bundles an iOS static framework for third-party distribution.
+
+A static framework is bundled like a dynamic framework except that the embedded
+binary is a static library rather than a dynamic library. It is intended to
+create distributable static SDKs or artifacts that can be easily imported into
+other Xcode projects; it is specifically **not** intended to be used as a
+dependency of other Bazel targets. For that use case, use the corresponding
+`objc_library` targets directly.
+
+Unlike other iOS bundles, the fat binary in an `ios_static_framework` may
+simultaneously contain simulator and device architectures (that is, you can
+build a single framework artifact that works for all architectures by specifying
+`--ios_multi_cpus=i386,x86_64,armv7,arm64` when you build).
+
+`ios_static_framework` supports Swift, but there are some constraints:
+
+* `ios_static_framework` with Swift only works with Xcode 11 and above, since
+  the required Swift functionality for module compatibility is available in
+  Swift 5.1.
+* `ios_static_framework` only supports a single direct `swift_library` target
+  that does not depend transitively on any other `swift_library` targets. The
+  Swift compiler expects a framework to contain a single Swift module, and each
+  `swift_library` target is its own module by definition.
+* `ios_static_framework` does not support mixed Objective-C and Swift public
+  interfaces. This means that the `umbrella_header` and `hdrs` attributes are
+  unavailable when using `swift_library` dependencies. You are allowed to depend
+  on `objc_library` from the main `swift_library` dependency, but note that only
+  the `swift_library`'s public interface will be available to users of the
+  static framework.
+
+When using Swift, the `ios_static_framework` bundles `swiftinterface` and
+`swiftdocs` file for each of the required architectures. It also bundles an
+umbrella header which is the header generated by the single `swift_library`
+target. Finally, it also bundles a `module.modulemap` file pointing to the
+umbrella header for Objetive-C module compatibility. This umbrella header and
+modulemap can be skipped by disabling the `swift.no_generated_header` feature (
+i.e. `--features=-swift.no_generated_header`).""",
 )
 
 ios_imessage_application = rule_factory.create_apple_bundling_rule(
     implementation = _ios_imessage_application_impl,
     platform_type = "ios",
     product_type = apple_product_type.messages_application,
-    doc = "Builds and bundles an iOS iMessage Application.",
+    doc = """Builds and bundles an iOS iMessage Application.
+
+iOS iMessage applications do not have any dependencies, as it works mostly as a wrapper
+for either an iOS iMessage extension or a Sticker Pack extension.""",
 )
 
 ios_imessage_extension = rule_factory.create_apple_bundling_rule(

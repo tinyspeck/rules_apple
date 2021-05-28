@@ -39,6 +39,10 @@ load(
     "resources",
 )
 load(
+    "@build_bazel_rules_apple//apple/internal/utils:bundle_paths.bzl",
+    "bundle_paths",
+)
+load(
     "@build_bazel_rules_apple//apple/internal/utils:defines.bzl",
     "defines",
 )
@@ -55,6 +59,7 @@ load(
     "SwiftInfo",
     "SwiftToolchainInfo",
     "SwiftUsageInfo",
+    "swift_clang_module_aspect",
     "swift_common",
 )
 
@@ -130,6 +135,14 @@ def _all_framework_binaries(frameworks_groups):
 
     return binaries
 
+def _all_dsym_binaries(dsym_imports):
+    """Returns a list of Files of all imported dSYM binaries."""
+    return [
+        file
+        for file in dsym_imports
+        if file.basename.lower() != "info.plist"
+    ]
+
 def _get_framework_binary_file(framework_dir, framework_imports):
     """Returns the File that is the framework's binary."""
     framework_name = paths.split_extension(paths.basename(framework_dir))[0]
@@ -188,12 +201,18 @@ def _transitive_framework_imports(deps):
             hasattr(dep[AppleFrameworkImportInfo], "framework_imports"))
     ]
 
-def _framework_import_info(transitive_sets, arch_found, dsyms = []):
+def _framework_import_info(
+        *,
+        arch_found,
+        debug_info_binaries,
+        dsyms,
+        transitive_sets):
     """Returns AppleFrameworkImportInfo containing transitive framework imports and build archs."""
     provider_fields = {}
     if transitive_sets:
         provider_fields["framework_imports"] = depset(transitive = transitive_sets)
     provider_fields["build_archs"] = depset([arch_found])
+    provider_fields["debug_info_binaries"] = depset(debug_info_binaries)
     provider_fields["dsym_imports"] = depset(dsyms)
     return AppleFrameworkImportInfo(**provider_fields)
 
@@ -270,6 +289,32 @@ def _framework_search_paths(header_imports):
     else:
         return []
 
+def _debug_info_binaries(
+        dsym_binaries,
+        framework_binaries):
+    """Return the list of files that provide debug info."""
+    all_binaries_dict = {}
+
+    for file in dsym_binaries:
+        dsym_bundle_path = bundle_paths.farthest_parent(
+            file.short_path,
+            "framework.dSYM",
+        )
+        dsym_bundle_basename = paths.basename(dsym_bundle_path)
+        framework_basename = dsym_bundle_basename.rstrip(".dSYM")
+        all_binaries_dict[framework_basename] = file
+
+    for file in framework_binaries:
+        framework_path = bundle_paths.farthest_parent(
+            file.short_path,
+            "framework",
+        )
+        framework_basename = paths.basename(framework_path)
+        if framework_basename not in all_binaries_dict:
+            all_binaries_dict[framework_basename] = file
+
+    return all_binaries_dict.values()
+
 def _apple_dynamic_framework_import_impl(ctx):
     """Implementation for the apple_dynamic_framework_import rule."""
     providers = []
@@ -282,21 +327,28 @@ def _apple_dynamic_framework_import_impl(ctx):
     transitive_sets = _transitive_framework_imports(ctx.attr.deps)
     if bundling_imports:
         transitive_sets.append(depset(bundling_imports))
+    framework_groups = _grouped_framework_files(framework_imports)
+    framework_binaries = _all_framework_binaries(framework_groups)
+    dsym_binaries = _all_dsym_binaries(ctx.files.dsym_imports)
+    debug_info_binaries = _debug_info_binaries(
+        dsym_binaries = dsym_binaries,
+        framework_binaries = framework_binaries,
+    )
     providers.append(
         _framework_import_info(
-            transitive_sets,
-            ctx.fragments.apple.single_arch_cpu,
-            ctx.files.dsym_imports,
+            arch_found = ctx.fragments.apple.single_arch_cpu,
+            debug_info_binaries = debug_info_binaries,
+            dsyms = ctx.files.dsym_imports,
+            transitive_sets = transitive_sets,
         ),
     )
 
-    framework_groups = _grouped_framework_files(framework_imports)
     framework_dirs_set = depset(framework_groups.keys())
     objc_provider_fields = _framework_objc_provider_fields(
         "dynamic_framework_file",
         header_imports,
         module_map_imports,
-        [] if ctx.attr.bundle_only else _all_framework_binaries(framework_groups),
+        [] if ctx.attr.bundle_only else framework_binaries,
     )
 
     objc_provider = _objc_provider_with_dependencies(ctx, objc_provider_fields)
@@ -329,7 +381,12 @@ def _apple_static_framework_import_impl(ctx):
     _, header_imports, module_map_imports = _classify_framework_imports(ctx.var, framework_imports)
 
     transitive_sets = _transitive_framework_imports(ctx.attr.deps)
-    providers.append(_framework_import_info(transitive_sets, ctx.fragments.apple.single_arch_cpu))
+    providers.append(_framework_import_info(
+        arch_found = ctx.fragments.apple.single_arch_cpu,
+        debug_info_binaries = [],
+        dsyms = [],
+        transitive_sets = transitive_sets,
+    ))
 
     framework_groups = _grouped_framework_files(framework_imports)
     framework_binaries = _all_framework_binaries(framework_groups)
@@ -411,6 +468,7 @@ on this target.
 """,
         ),
         "deps": attr.label_list(
+            aspects = [swift_clang_module_aspect],
             doc = """
 A list of targets that are dependencies of the target being built, which will be linked into that
 target.
@@ -493,6 +551,7 @@ are not present at runtime.
 """,
         ),
         "deps": attr.label_list(
+            aspects = [swift_clang_module_aspect],
             doc = """
 A list of targets that are dependencies of the target being built, which will provide headers and be
 linked into that target.

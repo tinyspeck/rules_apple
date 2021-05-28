@@ -424,6 +424,7 @@ ios_application(
         "iphone",
         "ipad",
     ],
+    include_symbols_in_bundle = True,
     infoplists = [
         "//test/starlark_tests/resources:Info.plist",
     ],
@@ -905,6 +906,30 @@ ios_application(
     tags = FIXTURE_TAGS,
     deps = [
         "//test/starlark_tests/resources:objc_main_lib",
+    ],
+)
+
+ios_application(
+    name = "app_with_ext_and_fmwk_and_symbols_in_bundle",
+    bundle_id = "com.google.example",
+    extensions = [":ext_with_fmwk_provisioned"],
+    families = [
+        "iphone",
+        "ipad",
+    ],
+    frameworks = [
+        ":fmwk_with_provisioning",
+    ],
+    include_symbols_in_bundle = True,
+    infoplists = [
+        "//test/starlark_tests/resources:Info.plist",
+    ],
+    ipa_post_processor = "//test/starlark_tests/targets_under_test/apple:ipa_post_processor_verify_codesigning",
+    minimum_os_version = "8.0",
+    tags = FIXTURE_TAGS,
+    deps = [
+        "//test/starlark_tests/resources:objc_main_lib",
+        "//test/testdata/fmwk:iOSImportedDynamicFrameworkWithDebugInfo",
     ],
 )
 

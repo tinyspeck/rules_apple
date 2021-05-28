@@ -229,6 +229,20 @@ This attribute is public as an implementation detail while we migrate the archit
 Do not change its value.
     """,
             ),
+            "exported_symbols_lists": attr.label_list(
+                allow_files = True,
+                doc = """
+A list of targets containing exported symbols lists files for the linker to control symbol
+resolution.
+
+Each file is expected to have a list of global symbol names that will remain as global symbols in
+the compiled binary owned by this framework. All other global symbols will be treated as if they
+were marked as `__private_extern__` (aka `visibility=hidden`) and will not be global in the output
+file.
+
+See the man page documentation for `ld(1)` on macOS for more details.
+""",
+            ),
             "codesign_inputs": attr.label_list(
                 doc = """
 A list of dependencies targets that provide inputs that will be used by
@@ -438,7 +452,7 @@ in the list.
         attrs.append({
             "settings_bundle": attr.label(
                 aspects = [apple_resource_aspect],
-                providers = [["objc"], [AppleResourceBundleInfo]],
+                providers = [["objc"], [AppleResourceBundleInfo], [apple_common.Objc]],
                 doc = """
 A resource bundle (e.g. `apple_bundle_import`) target that contains the files that make up the
 application's settings bundle. These files will be copied into the root of the final application
@@ -601,6 +615,15 @@ the application bundle.
                 allow_single_file = True,
                 default = Label("@build_bazel_rules_apple//apple/internal/templates:ios_sim_template"),
             ),
+            "include_symbols_in_bundle": attr.bool(
+                default = False,
+                doc = """
+    If true and --output_groups=+dsyms is specified, generates `$UUID.symbols`
+    files from all `{binary: .dSYM, ...}` pairs for the application and its
+    dependencies, then packages them under the `Symbols/` directory in the
+    final application bundle.
+    """,
+            ),
         })
     elif rule_descriptor.product_type == apple_product_type.app_clip:
         attrs.append({
@@ -729,6 +752,15 @@ set, then the default extension is determined by the application's product_type.
                 cfg = "host",
                 allow_single_file = True,
                 default = Label("@build_bazel_rules_apple//apple/internal/templates:macos_template"),
+            ),
+            "include_symbols_in_bundle": attr.bool(
+                default = False,
+                doc = """
+    If true and --output_groups=+dsyms is specified, generates `$UUID.symbols`
+    files from all `{binary: .dSYM, ...}` pairs for the application and its
+    dependencies, then packages them under the `Symbols/` directory in the
+    final application bundle.
+    """,
             ),
         })
 
