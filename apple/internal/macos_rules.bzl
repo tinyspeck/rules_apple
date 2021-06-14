@@ -89,7 +89,7 @@ def _macos_application_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     embedded_targets = ctx.attr.extensions + ctx.attr.xpc_services
@@ -278,16 +278,21 @@ def _macos_application_impl(ctx):
                 processor_result.output_groups,
             )
         ),
-        link_result.binary_provider,
+        apple_common.new_executable_binary_provider(
+            binary = binary_artifact,
+            objc = link_result.objc,
+        ),
     ] + processor_result.providers
 
 def _macos_bundle_impl(ctx):
     """Implementation of macos_bundle."""
     link_result = linking_support.register_linking_action(
         ctx,
+        bundle_loader = ctx.attr.bundle_loader,
+        extra_linkopts = ["-bundle"],
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -441,7 +446,7 @@ def _macos_extension_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -602,6 +607,7 @@ def _macos_extension_impl(ctx):
 def _macos_quick_look_plugin_impl(ctx):
     """Experimental implementation of macos_quick_look_plugin."""
     extra_linkopts = [
+        "-dynamiclib",
         "-install_name",
         "\"/Library/Frameworks/{0}.qlgenerator/{0}\"".format(ctx.attr.bundle_name),
     ]
@@ -610,7 +616,7 @@ def _macos_quick_look_plugin_impl(ctx):
         extra_linkopts = extra_linkopts,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -771,7 +777,7 @@ def _macos_kernel_extension_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -930,7 +936,7 @@ def _macos_spotlight_importer_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -1088,7 +1094,7 @@ def _macos_xpc_service_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -1246,7 +1252,7 @@ def _macos_command_line_application_impl(ctx):
         ctx,
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -1325,16 +1331,20 @@ def _macos_command_line_application_impl(ctx):
                 processor_result.output_groups,
             )
         ),
-        link_result.binary_provider,
+        apple_common.new_executable_binary_provider(
+            binary = output_file,
+            objc = link_result.objc,
+        ),
     ] + processor_result.providers
 
 def _macos_dylib_impl(ctx):
     """Implementation of the macos_dylib rule."""
     link_result = linking_support.register_linking_action(
         ctx,
+        extra_linkopts = ["-dynamiclib"],
         stamp = ctx.attr.stamp,
     )
-    binary_artifact = link_result.binary_provider.binary
+    binary_artifact = link_result.binary
     debug_outputs_provider = link_result.debug_outputs_provider
 
     actions = ctx.actions
@@ -1411,7 +1421,6 @@ def _macos_dylib_impl(ctx):
                 {"dylib": depset(direct = [output_file])},
             )
         ),
-        link_result.binary_provider,
     ] + processor_result.providers
 
 macos_application = rule_factory.create_apple_bundling_rule(
