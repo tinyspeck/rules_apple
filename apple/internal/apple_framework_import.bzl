@@ -314,11 +314,30 @@ def _debug_info_binaries(
 
     return all_binaries_dict.values()
 
+def _get_framework_imports(ctx):
+    if not ctx.attr.xcframework_platform_paths:
+        return ctx.files.framework_imports
+    curr_patform = ctx.fragments.apple.single_arch_platform.name_in_plist.lower()
+    if curr_patform not in [p.lower() for p in ctx.attr.xcframework_platform_paths]:
+        fail(
+            "Missing framework path mapping for platform `{}`; is this platform supported?"
+                .format(str(curr_patform)),
+        )
+    else:
+        platform_path = ctx.attr.xcframework_platform_paths[curr_patform]
+        if not platform_path.endswith((".framework", ".framework/")):
+            fail("xcframework path `{}` doesn't end with `.framework`".format(platform_path))
+        framework_imports_for_platform = [f for f in ctx.files.framework_imports if platform_path in f.short_path]
+        if len(framework_imports_for_platform) == 0:
+            fail("couldn't find framework at path `{}`".format(platform_path))
+        return framework_imports_for_platform
+
+
 def _apple_dynamic_framework_import_impl(ctx):
     """Implementation for the apple_dynamic_framework_import rule."""
     providers = []
 
-    framework_imports = ctx.files.framework_imports
+    framework_imports = _get_framework_imports(ctx)
     bundling_imports, header_imports, module_map_imports = (
         _classify_framework_imports(ctx.var, framework_imports)
     )
@@ -375,7 +394,7 @@ def _apple_static_framework_import_impl(ctx):
     """Implementation for the apple_static_framework_import rule."""
     providers = []
 
-    framework_imports = ctx.files.framework_imports
+    framework_imports = _get_framework_imports(ctx)
     _, header_imports, module_map_imports = _classify_framework_imports(ctx.var, framework_imports)
 
     transitive_sets = _transitive_framework_imports(ctx.attr.deps)
@@ -466,10 +485,21 @@ def _apple_static_framework_import_impl(ctx):
 
     return providers
 
+_common_attrs = {
+    "xcframework_platform_paths": attr.string_dict(
+        doc = """
+A key-value map of platforms to the corresponding .framework (containing all supported architectures) within the
+.xcframework, relative to the framework_import. The platform keys should be case-insensitive variants of
+values that might be found in the CFBundleSupportedPlatforms entry of an Info.plist file and in Xcode's
+platforms directory, without the extension (for example, iphoneos or iPhoneSimulator).
+""",
+    ),
+}
+
 apple_dynamic_framework_import = rule(
     implementation = _apple_dynamic_framework_import_impl,
     fragments = ["apple"],
-    attrs = {
+    attrs = dicts.add(_common_attrs, {
         "framework_imports": attr.label_list(
             allow_empty = False,
             allow_files = True,
@@ -503,7 +533,7 @@ Avoid linking the dynamic framework, but still include it in the app. This is us
 to manually dlopen the framework at runtime.
 """,
         ),
-    },
+    }),
     doc = """
 This rule encapsulates an already-built dynamic framework. It is defined by a list of
 files in exactly one `.framework` directory. `apple_dynamic_framework_import` targets
@@ -530,7 +560,7 @@ objc_library(
 apple_static_framework_import = rule(
     implementation = _apple_static_framework_import_impl,
     fragments = ["apple"],
-    attrs = dicts.add(swift_common.toolchain_attrs(), {
+    attrs = dicts.add(_common_attrs, swift_common.toolchain_attrs(), {
         "framework_imports": attr.label_list(
             allow_empty = False,
             allow_files = True,
