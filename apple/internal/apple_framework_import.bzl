@@ -35,6 +35,10 @@ load(
     "sets",
 )
 load(
+    "@build_bazel_rules_apple//apple:providers.bzl",
+    "AppleFrameworkImportInfo",
+)
+load(
     "@build_bazel_rules_apple//apple/internal:resources.bzl",
     "resources",
 )
@@ -49,10 +53,6 @@ load(
 load(
     "@build_bazel_rules_apple//apple:utils.bzl",
     "group_files_by_directory",
-)
-load(
-    "@build_bazel_rules_apple//apple:providers.bzl",
-    "AppleFrameworkImportInfo",
 )
 load(
     "@build_bazel_rules_swift//swift:swift.bzl",
@@ -319,23 +319,29 @@ def _debug_info_binaries(
     return all_binaries_dict.values()
 
 def _get_framework_imports(ctx):
-    if not ctx.attr.xcframework_platform_paths:
+    if not ctx.attr.xcframework_platform_ids:
         return ctx.files.framework_imports
-    curr_patform = ctx.fragments.apple.single_arch_platform.name_in_plist.lower()
-    if curr_patform not in [p.lower() for p in ctx.attr.xcframework_platform_paths]:
+    curr_platform = ctx.fragments.apple.single_arch_platform.name_in_plist.lower()
+    xcframework_path = ""
+    for f in ctx.files.framework_imports:
+        if ".xcframework" in f.path:
+            xcframework_path = f.path.split(".xcframework")[0] + ".xcframework"
+            break
+    if not xcframework_path.endswith(".xcframework"):
+        fail("couldn't find xcframework at framework_imports")
+    framework_name = paths.split_extension(paths.basename(xcframework_path))[0]
+
+    if curr_platform not in [p.lower() for p in ctx.attr.xcframework_platform_ids]:
         fail(
             "Missing framework path mapping for platform `{}`; is this platform supported?"
-                .format(str(curr_patform)),
+                .format(str(curr_platform)),
         )
     else:
-        platform_path = ctx.attr.xcframework_platform_paths[curr_patform]
-        if not platform_path.endswith((".framework", ".framework/")):
-            fail("xcframework path `{}` doesn't end with `.framework`".format(platform_path))
+        platform_path = "{}/{}/{}.framework".format(xcframework_path, ctx.attr.xcframework_platform_ids[curr_platform], framework_name)
         framework_imports_for_platform = [f for f in ctx.files.framework_imports if platform_path in f.short_path]
         if len(framework_imports_for_platform) == 0:
             fail("couldn't find framework at path `{}`".format(platform_path))
         return framework_imports_for_platform
-
 
 def _apple_dynamic_framework_import_impl(ctx):
     """Implementation for the apple_dynamic_framework_import rule."""
@@ -492,14 +498,14 @@ def _apple_static_framework_import_impl(ctx):
     return providers
 
 _common_attrs = {
-    "xcframework_platform_paths": attr.string_dict(
+    "xcframework_platform_ids": attr.string_dict(
         doc = """
-A key-value map of platforms to the corresponding .framework (containing all supported architectures) within the
-.xcframework, relative to the framework_import. The platform keys should be case-insensitive variants of
+A key-value map of platforms to the corresponding platform IDs (containing all supported architectures), 
+relative to the framework_import. The platform keys should be case-insensitive variants of
 values that might be found in the CFBundleSupportedPlatforms entry of an Info.plist file and in Xcode's
 platforms directory, without the extension (for example, iphoneos or iPhoneSimulator).
 """,
-    ),
+        ),
 }
 
 apple_dynamic_framework_import = rule(
