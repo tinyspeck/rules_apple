@@ -334,7 +334,7 @@ def _get_framework_imports(ctx):
         )
     else:
         platform_path = "{}/{}/{}.framework".format(xcframework_path, ctx.attr.xcframework_platform_ids[curr_platform], framework_name)
-        framework_imports_for_platform = [f for f in ctx.files.framework_imports if platform_path in f.short_path]
+        framework_imports_for_platform = [f for f in ctx.files.framework_imports if platform_path in f.path]
         if len(framework_imports_for_platform) == 0:
             fail("couldn't find framework at path `{}`".format(platform_path))
         return framework_imports_for_platform
