@@ -69,7 +69,7 @@ def _ios_xctestrun_runner_impl(ctx):
     runfiles = ctx.runfiles(files = [
         ctx.file._xctestrun_template,
         ctx.file._xctrunner_entitlements_template,
-    ]).merge(ctx.attr._simulator_manager_start[DefaultInfo].default_runfiles)
+    ]).merge(ctx.attr.simulator_manager_start[DefaultInfo].default_runfiles)
 
     default_action_binary = "/usr/bin/true"
 
@@ -93,7 +93,7 @@ def _ios_xctestrun_runner_impl(ctx):
             create_xcresult_bundle = "true" if ctx.attr.create_xcresult_bundle else "false",
             device_type = device_type,
             os_version = os_version,
-            simulator_manager_start = ctx.executable._simulator_manager_start.short_path,
+            simulator_manager_start = ctx.executable.simulator_manager_start.short_path,
             random = ctx.attr.random,
             xcodebuild_args = " ".join(ctx.attr.xcodebuild_args) if ctx.attr.xcodebuild_args else "",
             command_line_args = " ".join(ctx.attr.command_line_args) if ctx.attr.command_line_args else "",
@@ -204,10 +204,7 @@ A binary to run following test execution. Runs after testing but before test res
 When true, the exit code of the test run will be set to the exit code of the post action. This is useful for tests that need to fail the test run based on their own criteria.
 """,
         ),
-        "_simulator_manager_start": attr.label(
-            default = Label(
-                "//apple/testing/simulator_manager:start",
-            ),
+        "simulator_manager_start": attr.label(
             executable = True,
             cfg = "exec",
         ),
